@@ -57,6 +57,14 @@ The script generates two visualization plots:
 1. `vae_results_{latent_dim}_{batch_size}.png`: Shows original MNIST digits and their VAE reconstructions
 2. `gan_results_{latent_dim}_{batch_size}.png`: Shows random latent vectors and their corresponding generated digits
 
+example:
+
+`vae_results_2_128.png`:
+![vae_results_2_128](https://github.com/user-attachments/assets/07af1bab-9753-45c3-b3c6-02b0504768ea)
+
+`gan_results_2_128.png`:
+![gan_results_2_128](https://github.com/user-attachments/assets/01099911-0301-41ff-91ce-ebdc983061a6)
+
 ## Model Architecture
 
 ### Encoder
