@@ -12,7 +12,7 @@ def generate_images(generator, n_images,latent_dim):
         axes[i].imshow(img.squeeze(), cmap="gray")
         axes[i].axis("off")
     plt.show()
-    
+
 
 def load_data(custom_dataset=None):
     if custom_dataset is None:

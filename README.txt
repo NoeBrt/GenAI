@@ -1,93 +1,118 @@
-# Variational Autoencoder (VAE) Implementation for MNIST
-
-This project implements a Variational Autoencoder (VAE) to generate and reconstruct MNIST digits using TensorFlow 2.x.
+# GAN Training and Comparison: CNN-Based vs Transformer-Based
 
 ## Overview
+This repository implements and compares two Generative Adversarial Network (GAN) models:
+1. **CNN-based GAN**
+   - Uses Convolutional Neural Networks (CNNs) for both the Generator and Discriminator.
+2. **Transformer-based GAN**
+   - Utilizes Transformer architecture with Multi-Head Self-Attention (MHSA) for the Generator and Discriminator.
 
-The VAE consists of an encoder that compresses images into a lower-dimensional latent space and a decoder that reconstructs images from this latent representation. This implementation includes:
+The models are trained on the **MNIST dataset**, and their performance is compared based on the quality of generated images.
 
-- Encoder network that maps images to mean and variance of latent distribution
-- Decoder network that reconstructs images from latent vectors
-- Training loop with reparameterization trick and KL divergence loss
-- Visualization of original vs. reconstructed images
-- Generation of new images from random latent vectors
+---
 
-## Requirements
+## Table of Contents
+1. [Instructions](#instructions)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Code Explanation](#code-explanation)
+5. [FAQs](#faqs)
+6. [License](#license)
 
-- TensorFlow 2.x
+---
+
+## Instructions
+
+### Part 1: CNN-based GAN
+1. **Generator**
+   - Uses Transpose Convolution layers to upsample noise into images.
+   - Activation: ReLU for hidden layers, Tanh for output layer.
+
+2. **Discriminator**
+   - Uses Convolution layers to downsample input images.
+   - Activation: LeakyReLU for hidden layers, Sigmoid for output layer.
+
+3. **Training**
+   - The model is trained on the MNIST dataset to generate handwritten digits.
+
+**Questions:**
+1. What is Transpose Convolution, and why do we use it in the Generator?
+2. What are LeakyReLU and Sigmoid, and why are they used in the Discriminator?
+
+---
+
+### Part 2: Transformer-based GAN
+1. **Generator**
+   - Uses Multi-Head Self-Attention (MHSA) and positional encodings.
+   - Upsamples the latent space using feedforward layers.
+
+2. **Discriminator**
+   - Analyzes global relationships using MHSA.
+   - Classifies real vs fake images.
+
+3. **Training**
+   - Trained on the MNIST dataset and compared with the CNN-based GAN.
+
+---
+
+## Installation
+
+### Prerequisites
+- Python 3.x
+- TensorFlow
+- Keras
 - NumPy
 - Matplotlib
 
-## Project Structure
+### Clone the Repository
+```bash
+git clone https://github.com/your_username/gan-comparison.git
+cd gan-comparison
+```
 
+### Install Required Packages
+```bash
+pip install -r requirements.txt
 ```
-.
-├── encoder.py     # Encoder network implementation
-├── decoder.py     # Decoder network implementation
-├── vae.py        # VAE model and training utilities
-└── main.py       # Training script and visualization
-```
+
+---
 
 ## Usage
+To train a GAN model:
 
-Run the training script with default parameters:
-
+### Train the CNN-based GAN
 ```bash
-python main.py
+python main.py --model cnn --epochs 100 --batch_size 64 --learning_rate 0.0002 --latent_dim 100
 ```
 
-Or customize the training with command-line arguments:
-
+### Train the Transformer-based GAN
 ```bash
-python main.py --latent_dim 10 --batch_size 256 --epochs 50 --num_examples 10 --output_dir results
+python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 0.0002 --latent_dim 100
 ```
 
-### Command-line Arguments
+### Generate Images
+```bash
+python main.py --model cnn --n_images 10 --output output.png
+```
 
-- `--latent_dim`: Dimension of the latent space (default: 2)
-- `--batch_size`: Batch size for training (default: 128)
-- `--epochs`: Number of training epochs (default: 20)
-- `--num_examples`: Number of examples to visualize (default: 5)
-- `--output_dir`: Output directory for saving visualizations (default: 'vae_results')
+---
 
-## Output
+## Code Explanation
 
-The script generates two visualization plots:
+- **`cnnGan.py`**: Defines the CNN-based GAN architecture (Generator and Discriminator).
+- **`transformerGan.py`**: Implements the Transformer-based GAN with MHSA.
+- **`commonGan.py`**: Contains utility functions for data loading and image generation.
+- **`main.py`**: The entry point for training and generating images.
 
-1. `vae_results_{latent_dim}_{batch_size}.png`: Shows original MNIST digits and their VAE reconstructions
-2. `gan_results_{latent_dim}_{batch_size}.png`: Shows random latent vectors and their corresponding generated digits
+---
 
-## Model Architecture
+## FAQs
 
-### Encoder
-- Flattens input images
-- Multiple dense layers with ReLU activation
-- Outputs mean and log variance for latent space
+### 1. What is Transpose Convolution, and why do we use it in the Generator?
+Transpose Convolution is used to upsample the input (latent vector) to an image size. It helps create high-resolution outputs.
 
-### Decoder
-- Takes latent vectors as input
-- Multiple dense layers with ReLU activation
-- Final layer reconstructs image with sigmoid activation
-- Reshapes output to match original image dimensions
+### 2. Why use LeakyReLU and Sigmoid in the Discriminator?
+- **LeakyReLU**: Prevents the vanishing gradient problem by allowing a small gradient for negative values.
+- **Sigmoid**: Outputs a probability indicating whether the image is real or fake.
 
-## Training Process
-
-1. Load and preprocess MNIST dataset
-2. Initialize encoder and decoder networks
-3. Train for specified number of epochs:
-   - Compute reconstruction loss and KL divergence
-   - Update model weights using Adam optimizer
-4. Generate visualizations of results
-
-## Example Results
-
-The visualizations show:
-- Original MNIST digits compared to their reconstructions
-- Random latent vectors and their generated digits
-- Quality of reconstruction depends on latent dimension size
-
-## Notes
-
-- Higher latent dimensions generally lead to better reconstruction quality
-- Lower latent dimensions may capture more compressed representations
-- Training time increases with batch size and number of epochs
+---

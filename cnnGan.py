@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 from GANInterface import GANInterface
 
 class cnnGan(GANInterface):
-    
+
     @staticmethod
     def build_generator(latent_dim=100):
         model = tf.keras.Sequential([
-            layers.Dense(7 * 7 * 256, input_dim=latent_dim),
+            layers.Input(shape=(latent_dim,)),
+            layers.Dense(7 * 7 * 256),
             layers.Reshape((7, 7, 256)),
             layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu"),
             layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu"),
@@ -21,7 +22,8 @@ class cnnGan(GANInterface):
     @staticmethod
     def build_discriminator():
         model = tf.keras.Sequential([
-            layers.Conv2D(64, kernel_size=4, strides=2, padding="same", input_shape=(28, 28, 1)),
+            layers.Input(shape=(28, 28, 1)),
+            layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
             layers.LeakyReLU(alpha=0.2),
             layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
             layers.LeakyReLU(alpha=0.2),
@@ -45,10 +47,10 @@ class cnnGan(GANInterface):
                 noise = tf.random.normal([batch_size, latent_dim])
                 fake_images = generator.predict(noise)
                 real_images = x_train[np.random.randint(0, x_train.shape[0], batch_size)]
-                
+
                 real_labels = tf.ones((batch_size, 1))
                 fake_labels = tf.zeros((batch_size, 1))
-                
+
                 discriminator.trainable = True
                 d_loss_real = discriminator.train_on_batch(real_images, real_labels)
                 d_loss_fake = discriminator.train_on_batch(fake_images, fake_labels)
