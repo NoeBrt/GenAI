@@ -92,7 +92,7 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 ![cnn_gan_10epoch](https://github.com/user-attachments/assets/4c02a047-2f83-4da1-890c-3d790ac3567e)
 
 ### Transformers results with 10 epochs
-![cnn_gan_10epoch](https://github.com/user-attachments/assets/4c02a047-2f83-4da1-890c-3d790ac3567e)
+![tranformer_10_epochs2](https://github.com/user-attachments/assets/f5432d6a-d9a3-4587-a494-40a76fd97f0d)
 
 
 ## FAQs
