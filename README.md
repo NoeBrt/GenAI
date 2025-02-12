@@ -77,13 +77,6 @@ python main.py --model cnn --epochs 100 --batch_size 64 --learning_rate 0.0002 -
 python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 0.0002 --latent_dim 100
 ```
 
-### Generate Images
-```bash
-python main.py --model cnn --n_images 10 --output output.png
-```
-
----
-
 ## Code Explanation
 
 - **`cnnGan.py`**: Defines the CNN-based GAN architecture (Generator and Discriminator).
@@ -92,6 +85,15 @@ python main.py --model cnn --n_images 10 --output output.png
 - **`main.py`**: The entry point for training and generating images.
 
 ---
+
+## Results 
+
+### CNN results with 10 epochs
+![cnn_gan_10epoch](https://github.com/user-attachments/assets/4c02a047-2f83-4da1-890c-3d790ac3567e)
+
+### Transformers results with 10 epochs
+![cnn_gan_10epoch](https://github.com/user-attachments/assets/4c02a047-2f83-4da1-890c-3d790ac3567e)
+
 
 ## FAQs
 
