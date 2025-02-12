@@ -57,19 +57,6 @@ The models are trained on the **MNIST dataset**, and their performance is compar
 
 ## Installation
 
-### Prerequisites
-- Python 3.x
-- TensorFlow
-- Keras
-- NumPy
-- Matplotlib
-
-### Clone the Repository
-```bash
-git clone https://github.com/your_username/gan-comparison.git
-cd gan-comparison
-```
-
 ### Install Required Packages
 ```bash
 pip install -r requirements.txt
