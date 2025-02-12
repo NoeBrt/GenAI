@@ -81,6 +81,7 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 
 - **`cnnGan.py`**: Defines the CNN-based GAN architecture (Generator and Discriminator).
 - **`transformerGan.py`**: Implements the Transformer-based GAN with MHSA.
+- **`GANInterface.py`**: Static interface that define gan classic functions.
 - **`commonGan.py`**: Contains utility functions for data loading and image generation.
 - **`main.py`**: The entry point for training and generating images.
 
