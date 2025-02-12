@@ -12,12 +12,6 @@ The VAE consists of an encoder that compresses images into a lower-dimensional l
 - Visualization of original vs. reconstructed images
 - Generation of new images from random latent vectors
 
-## Requirements
-
-- TensorFlow 2.x
-- NumPy
-- Matplotlib
-
 ## Project Structure
 
 ```
