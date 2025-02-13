@@ -99,7 +99,7 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 ## FAQs
 
 ### 1. What is Transpose Convolution, and why do we use it in the Generator?
-According to keras documentation, the tranpose convolution corespond to the opposite of a convolution (also called a deconvolution or upsampling), in our generator on the CNN GAN, it allow to retrieve the dimension of a 28*28 image from our latent vector (after a prokection in a 7*7*256 space and a reshaping to a (7,7,128) tensor).
+According to keras documentation, the tranpose convolution corespond to the opposite of a convolution (also called a deconvolution or upsampling), in our generator on the CNN GAN, it allow to retrieve the dimension of a 28\*28 image from our latent vector (after a prokection in a 7\*7\*256 space and a reshaping to a (7,7,128) tensor).
 
 ### 2. Why Use LeakyReLU and Sigmoid in the Discriminator?
 
