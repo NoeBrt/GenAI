@@ -112,5 +112,7 @@ LeakyReLU is similar to ReLU but assigns a small slope for negative inputs inste
 
 
 - **Sigmoid**:After the convolutional layers, a sigmoid function converts the output into a probability score between 0 and 1. During the training we want that the weights lead the input to the right probabilities.
+
 ![image](https://github.com/user-attachments/assets/8381b8e3-7519-4f06-b620-a9f011972a5b)
+
 ---
