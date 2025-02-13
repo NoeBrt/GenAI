@@ -99,10 +99,18 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 ## FAQs
 
 ### 1. What is Transpose Convolution, and why do we use it in the Generator?
-Transpose Convolution is used to upsample the input (latent vector) to an image size. It helps create high-resolution outputs.
+According to keras documentation, the tranpose convolution corespond to the opposite of a convolution (also called a deconvolution or upsampling), in our generator on the CNN GAN, it allow to retrieve the dimension of a 28*28 image from our latent vector (after a prokection in a 7*7*256 space and a reshaping to a (7,7,128) tensor).
 
-### 2. Why use LeakyReLU and Sigmoid in the Discriminator?
+### 2. Why Use LeakyReLU and Sigmoid in the Discriminator?
+
 - **LeakyReLU**: Prevents the vanishing gradient problem by allowing a small gradient for negative values.
-- **Sigmoid**: Outputs a probability indicating whether the image is real or fake.
 
+LeakyReLU is similar to ReLU but assigns a small slope for negative inputs instead of zero. This ensures that neurons continue to update during training rather than getting "stuck" with zero gradients. In our discriminator, we apply two LeakyReLU activations (with an alpha of 0.2) after each convolution, maintaining gradient flow and non-linearity so the model can learn complex patterns.
+
+![image](https://github.com/user-attachments/assets/e2c454e4-f447-4557-88a0-9e30a55aebab)
+
+
+
+- **Sigmoid**:After the convolutional layers, a sigmoid function converts the output into a probability score between 0 and 1. During the training we want that the weights lead the input to the right probabilities.
+![image](https://github.com/user-attachments/assets/44aa96b6-9444-492c-98e4-b9da8c2e17ff)
 ---
