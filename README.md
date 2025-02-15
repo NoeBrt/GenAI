@@ -2,6 +2,19 @@
 
 ## Overview
 This repository implements and compares two Generative Adversarial Network (GAN) models:
+
+**What is a GAN?**
+
+A GAN is a type of network architecture that consists of two neural network: a Generator, wich purpose is to generate new data from a latent space, and a Discriminator, trained in parallel to *discriminate* between real and fake data.
+
+**How is it trained?**
+
+The training with data of a GAN :
+1. The Generator generates a batch of fake data from a latent space.
+2. we attribute a label of 0 to the fake batch 1 to a batch of real data.
+3. The Discriminator is trained to distinguish between real and fake data.
+4. We froze the weight update of the Discriminator and we train the Generator to generate data that the Discriminator will classify as real. By creating a batch of fake data and attributing a label of 1 to it. We minimise the loss of the Generator so the output of the Discriminator is close to 1 for generated data.
+
 1. **CNN-based GAN**
    - Uses Convolutional Neural Networks (CNNs) for both the Generator and Discriminator.
 2. **Transformer-based GAN**
@@ -88,10 +101,59 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 ---
 
 ## CNN Gan
+A Convolutional Neural Network (CNN) in the context of GANs is a type of neural network that uses convolutional layers to extract features from images. In our CNN-based GAN, we use CNNs for both the Generator and Discriminator.
+
+### Generator
+
+```python
+        model = tf.keras.Sequential([
+            layers.Input(shape=(latent_dim,)),
+            layers.Dense(7 * 7 * 256),
+            layers.Reshape((7, 7, 256)),
+            layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu"),
+            layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu"),
+            layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
+        ])
+```
+
+### Discriminator
+```python
+        model = tf.keras.Sequential([
+            layers.Input(shape=(28, 28, 1)),
+            layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(alpha=0.2),
+            layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(alpha=0.2),
+            layers.Flatten(),
+            layers.Dense(1, activation="sigmoid")
+        ])
+```
 
 ## Transformer Gan
+```python
+        model = tf.keras.Sequential([
+            layers.Input(shape=(latent_dim,)),
+            layers.Dense(7 * 7 * 256),
+            layers.Reshape((7, 7, 256)),
+            layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu"),
+            layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu"),
+            layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
+        ])
+```
 
-## Results 
+### Discriminator
+```python
+        model = tf.keras.Sequential([
+            layers.Input(shape=(28, 28, 1)),
+            layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(alpha=0.2),
+            layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
+            layers.LeakyReLU(alpha=0.2),
+            layers.Flatten(),
+            layers.Dense(1, activation="sigmoid")
+        ])
+```
+## Results
 
 ### CNN results with 10 epochs
 ![cnn_gan_10epoch](https://github.com/user-attachments/assets/4c02a047-2f83-4da1-890c-3d790ac3567e)
