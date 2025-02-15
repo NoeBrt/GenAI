@@ -77,7 +77,7 @@ python main.py --model cnn --epochs 100 --batch_size 64 --learning_rate 0.0002 -
 python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 0.0002 --latent_dim 100
 ```
 
-## Code Explanation
+## Code Architecture
 
 - **`cnnGan.py`**: Defines the CNN-based GAN architecture (Generator and Discriminator).
 - **`transformerGan.py`**: Implements the Transformer-based GAN with MHSA.
@@ -86,6 +86,10 @@ python main.py --model transformer --epochs 100 --batch_size 64 --learning_rate 
 - **`main.py`**: The entry point for training and generating images.
 
 ---
+
+## CNN Gan
+
+## Transformer Gan
 
 ## Results 
 
