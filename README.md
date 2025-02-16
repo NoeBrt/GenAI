@@ -13,12 +13,7 @@ The training with data of a GAN :
 1. The Generator generates a batch of fake data from a latent space.
 2. we attribute a label of 0 to the fake batch 1 to a batch of real data.
 3. The Discriminator is trained to distinguish between real and fake data.
-4. We froze the weight update of the Discriminator and we train the Generator to generate data that the Discriminator will classify as real. By creating a batch of fake data and attributing a label of 1 to it. We minimise the loss of the Generator so the output of the Discriminator is close to 1 for generated data.
-
-1. **CNN-based GAN**
-   - Uses Convolutional Neural Networks (CNNs) for both the Generator and Discriminator.
-2. **Transformer-based GAN**
-   - Utilizes Transformer architecture with Multi-Head Self-Attention (MHSA) for the Generator and Discriminator.
+4. We froze the weight update of the Discriminator and we train the Generator to generate data that the Discriminator will classify as real. By creating a batch of fake data (of the latent space dimension using a distribution like normal distribution) and attributing a label of 1 to it. We minimise the loss of the Generator so the output of the Discriminator is close to 1 for generated data.
 
 The models are trained on the **MNIST dataset**, and their performance is compared based on the quality of generated images.
 
@@ -115,6 +110,76 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
             layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
         ])
 ```
+
+**What is used in the model ?**
+- ***Sequential*** : A Sequential model i for a plain stack of layers where each layer has exactly one input tensor and one output tensor.
+- ***Input*** : A input layer is used to define the input shape of the model.
+- ***Dense*** : A dense layer permit the model to learn non-linear relationships in the data by using a set of weights and biases to change the size of the entry vector.
+   - ***filters***
+   - ***kernel_size*** : The kernel size is the size of the filter matrix for the convolution.
+   - ***strides*** : The stride is the number of pixels by which the filter matrix is shifted over the input matrix.
+   - ***padding*** : Padding is a technique used to preserve the spatial dimensions of the input volume.
+   - ***activation*** : Activation function is at the of each layer, it's used to introduce non-linearity to the model.
+- ***Reshape*** : Reshape layer is used to change the shape of the input tensor.
+- ***Conv2DTranspose*** : Conv2DTranspose layer is used to upsample the input tensor, it's the opposite of a convolutional layer.
+
+
+**steps**
+1. The input layer takes a latent vector as input.
+   ```python
+   layers.Input(shape=(latent_dim,))
+   ```
+
+2. The dense layer projects the latent vector into a 7x7x256 tensor. (the model will learn how to extand the vector)
+   ```python
+   layers.Dense(7 * 7 * 256)
+   ```
+
+3. The reshape layer changes the shape of the tensor to (7, 7, 256) (like a 7x7 image with 256 channels).
+   ```python
+   layers.Reshape((7, 7, 256))
+   ```
+
+- **Conv2DTranspose Layer Details:**
+
+  - **First Conv2DTranspose Layer:**
+    ```python
+    layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu")
+    ```
+    - **Number of Filters:** 128
+      * Each filter is designed to detect a unique feature in the input.
+    - **Kernel Size:** 4x4
+      * This defines the spatial dimensions of the filter that slides over the input tensor.
+    - **Stride:** 2
+      * The filter moves 2 pixels at a time, effectively increasing the spatial dimensions (upscaling) of the output.
+    - **Padding:** "same"
+      * Padding is applied to conserve the spatial dimensions after the convolution operation.
+
+  - **Second Conv2DTranspose Layer:**
+    ```python
+    layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu")
+    ```
+    - **Number of Filters:** 64
+      * Further refines the features learned from the previous layer.
+    - **Kernel Size:** 4x4
+      * Defines the spatial dimensions of the filters.
+    - **Stride:** 2
+      * Further increases the spatial dimensions.
+    - **Padding:** "same"
+      * Ensures the output maintains the correct dimensions.
+
+  - **Final Conv2DTranspose Layer:**
+    ```python
+    layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
+    ```
+    - **Number of Filters:** 1
+      * Outputs a single-channel image (grayscale).
+    - **Kernel Size:** 7x7
+      * Covers the entire spatial structure of the input tensor.
+    - **Activation:** "tanh"
+      * Maps the output values between -1 and 1 to correspond to pixel values in the image.
+    - **Padding:** "same"
+      * Ensures the final output maintains the right spatial dimensions.
 
 ### Discriminator
 ```python
