@@ -1,4 +1,4 @@
-# GAN Training and Comparison: CNN-Based vs Transformer-Based
+0# GAN Training and Comparison: CNN-Based vs Transformer-Based
 
 ## Overview
 This repository implements and compares two Generative Adversarial Network (GAN) models:
@@ -125,29 +125,34 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
 
 
 **steps**
-1. The input layer takes a latent vector as input.
+
+```python
+    model = tf.keras.Sequential([
+```
+1. The model is defined as a Sequential model.
+
    ```python
    layers.Input(shape=(latent_dim,))
    ```
+2. The input layer takes a latent vector as input.
 
-2. The dense layer projects the latent vector into a 7x7x256 tensor. (the model will learn how to extand the vector)
    ```python
    layers.Dense(7 * 7 * 256)
    ```
+3. The dense layer projects the latent vector into a 7x7x256 tensor. (the model will learn how to extand the vector)
 
-3. The reshape layer changes the shape of the tensor to (7, 7, 256) (like a 7x7 image with 256 channels).
    ```python
    layers.Reshape((7, 7, 256))
    ```
+4. The reshape layer changes the shape of the tensor to (7, 7, 256) (like a 7x7 image with 256 channels).
 
-- **Conv2DTranspose Layer Details:**
 
-  - **First Conv2DTranspose Layer:**
     ```python
     layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu")
     ```
+5. The first Conv2DTranspose layer upsamples the tensor to (14, 14, 128).
     - **Number of Filters:** 128
-      * Each filter is designed to detect a unique feature in the input.
+      * Each filter consists of a set of weights that are learned during training to detect patterns in the input data.
     - **Kernel Size:** 4x4
       * This defines the spatial dimensions of the filter that slides over the input tensor.
     - **Stride:** 2
@@ -155,10 +160,11 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
     - **Padding:** "same"
       * Padding is applied to conserve the spatial dimensions after the convolution operation.
 
-  - **Second Conv2DTranspose Layer:**
+
     ```python
     layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu")
     ```
+6. The first Conv2DTranspose layer upsamples the tensor to (28, 28, 64).
     - **Number of Filters:** 64
       * Further refines the features learned from the previous layer.
     - **Kernel Size:** 4x4
@@ -168,10 +174,10 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
     - **Padding:** "same"
       * Ensures the output maintains the correct dimensions.
 
-  - **Final Conv2DTranspose Layer:**
     ```python
     layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
     ```
+7. The final Conv2DTranspose layer generates the output image.
     - **Number of Filters:** 1
       * Outputs a single-channel image (grayscale).
     - **Kernel Size:** 7x7
@@ -194,30 +200,203 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
         ])
 ```
 
-## Transformer Gan
+**What's new is used in the model ?**
+- **LeakyReLU**: ReLU with a small gradient for negative values. (see the Question section for more details)
+- **Conv2D**: Conv2D layer is used to downsample the input tensor using a set of filters and a kernel that slides over the input tensor to extract features.
+
+**steps**
+
 ```python
-        model = tf.keras.Sequential([
-            layers.Input(shape=(latent_dim,)),
-            layers.Dense(7 * 7 * 256),
-            layers.Reshape((7, 7, 256)),
-            layers.Conv2DTranspose(128, kernel_size=4, strides=2, padding="same", activation="relu"),
-            layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu"),
-            layers.Conv2DTranspose(1, kernel_size=7, activation="tanh", padding="same")
-        ])
+    model = tf.keras.Sequential([
+```
+1. The model is defined as a Sequential model.
+
+   ```python
+   layers.Input(shape=(28, 28, 1))
+   ```
+2. The input layer takes a 28x28x1 image as input.
+
+   ```python
+    layers.Conv2D(64, kernel_size=4, strides=2, padding="same")
+    ```
+3. The first Conv2D layer downsamples the input image to (14, 14, 64).
+
+```python
+    layers.LeakyReLU(alpha=0.2)
+```
+4. The LeakyReLU is used as the previous conv2D activation function, it  introduces non-linearity and prevents the vanishing gradient problem. it's alpha parameter correspond to the slope of ]-inf,0[.
+
+```python
+    layers.Conv2D(128, kernel_size=4, strides=2, padding="same")
+```
+5. The second Conv2D layer downsamples the input image to (7, 7, 128).
+
+```python
+    layers.LeakyReLU(alpha=0.2)
+```
+6. same as the first LeakyReLU layer.
+
+```python
+    layers.Flatten()
+```
+1. The Flatten layer converts the 3D tensor into a 1D tensor, so the dense layer can process every features.
+```python
+    layers.Dense(1, activation="sigmoid")
+
+```python
+    layers.Dense(1, activation="sigmoid")
+
+```python
+    layers.Dense(1, activation="sigmoid")
+```
+8. The dense layer reduce the vector to a number. The sigmoid convert the number to a probability score between 0 and 1.
+
+now we have to train these weights.
+## Transformer Gan
+
+Notice we do not use sequential model in the generator, we use the functional API to define the model.
+```python
+    def build_generator(latent_dim=100):
+        inputs = Input(shape=(latent_dim,))
+        x = Dense(7 * 7 * 128, activation="relu")(inputs)
+        x = Reshape((49, 128))(x)
+
+        position_encoding = tf.range(start=0, limit=49, delta=1)
+        position_embedding = tf.keras.layers.Embedding(input_dim=49,
+        output_dim=128)(position_encoding)
+
+        x += position_embedding
+        x = MultiHeadAttention(num_heads=4, key_dim=128)(x, x)
+        x = LayerNormalization()(x)
+        x = Dense(128, activation="relu")(x)
+        x = LayerNormalization()(x)
+        x = Reshape((7, 7, 128))(x)
+        x = layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same",
+        activation="relu")(x)
+        x = layers.Conv2DTranspose(1, kernel_size=4, strides=2, padding="same",
+        activation="tanh")(x)
+        model = Model(inputs, x, name="Transformer_Generator")
+        return model
 ```
 
-### Discriminator
+**What is used in the model ?**
+- **Positional Encoding**: Adds positional information to the input data.
+- **Multi-Head Self-Attention (MHSA)**: Analyzes global relationships in the data.
+- **Layer Normalization**: Normalizes the output of each layer.
+
+**steps**
 ```python
-        model = tf.keras.Sequential([
-            layers.Input(shape=(28, 28, 1)),
-            layers.Conv2D(64, kernel_size=4, strides=2, padding="same"),
-            layers.LeakyReLU(alpha=0.2),
-            layers.Conv2D(128, kernel_size=4, strides=2, padding="same"),
-            layers.LeakyReLU(alpha=0.2),
-            layers.Flatten(),
-            layers.Dense(1, activation="sigmoid")
-        ])
+    inputs = Input(shape=(latent_dim,))
 ```
+1. The input layer takes a latent vector as input.
+
+```python
+    x = Dense(7 * 7 * 256, activation="relu")(inputs)
+```
+2. The dense layer projects the latent vector into a 7x7x128 tensor using ReLU activation.
+
+```python
+    x = Reshape((49, 256))(x)
+```
+1. The reshape layer changes the shape of the tensor to (49, 256). (like a 7x7 image with 256 channels).
+
+```python
+    position_encoding = tf.range(start=0, limit=49, delta=1)
+    position_embedding = tf.keras.layers.Embedding(input_dim=49, output_dim=256)(position_encoding)
+    x += position_embedding
+```
+1. We add positionnal embeding to the input tensor, it's a way to add information about the position of the data in the tensor.
+
+```python
+    x = MultiHeadAttention(num_heads=4, key_dim=256)(x, x)
+    x = LayerNormalization()(x)
+```
+1. Using multihead attention to learn about the importance of each pixel compared to the others and ponderate them. we normalise the output of the multihead attention.
+
+
+
+```python
+    x = Dense(256, activation="relu")(x)
+    x = LayerNormalization()(x)
+```
+1. we project the tensor to a 256 dimension space.
+
+```python
+    x = Reshape((7, 7, 256))(x)
+    x = layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same", activation="relu")(x)
+    x = layers.Conv2DTranspose(1, kernel_size=4, strides=2, padding="same", activation="tanh")(x)
+```
+7. The reshape layer changes the shape of the tensor to (7, 7, 128), and two Conv2DTranspose layers upsample the tensor to generate the output image.
+
+```python
+    model = Model(inputs, x, name="Transformer_Generator")
+```
+8. The model is defined using the functional API.
+
+### Discriminator
+
+```python
+        inputs = Input(shape=(28, 28, 1))
+        x = Flatten()(inputs)
+        x = Dense(49 * 256, activation="relu")(x)
+        x = Reshape((49, 256))(x)
+
+        position_encoding = tf.range(start=0, limit=49, delta=1)
+        position_embedding = tf.keras.layers.Embedding(input_dim=49, output_dim=128)(position_encoding)
+        x += position_embedding
+
+        x = MultiHeadAttention(num_heads=4, key_dim=256)(x, x)
+        x = LayerNormalization()(x)
+
+        x = Flatten()(x)
+        x = Dense(256, activation="relu")(x)
+        x = Dense(1, activation="sigmoid")(x)
+        model = Model(inputs, x, name="Transformer_Discriminator")
+        return model
+```
+
+**steps**
+
+```python
+    inputs = Input(shape=(28, 28, 1))
+```
+1. The input layer takes a 28x28x1 image as input.
+
+```python
+    x = Flatten()(inputs)
+    x = Dense(49 * 256, activation="relu")(x)
+    x = Reshape((49, 256))(x)
+```
+2. The Flatten layer converts the 3D tensor into a 1D tensor, and the dense layer projects the input tensor into a 49x256 tensor.
+
+```python
+    position_encoding = tf.range(start=0, limit=49, delta=1)
+    position_embedding = tf.keras.layers.Embedding(input_dim=49, output_dim=128)(position_encoding)
+    x += position_embedding
+```
+3. We add positionnal embeding to the input tensor.
+
+```python
+    x = MultiHeadAttention(num_heads=4, key_dim=256)(x, x)
+    x = LayerNormalization()(x)
+```
+
+4. We use multihead attention to learn about the importance of each pixel compared to the others and ponderate them. we normalise the output of the multihead attention.
+
+```python
+    x = Flatten()(x)
+    x = Dense(256, activation="relu")(x)
+    x = Dense(1, activation="sigmoid")(x)
+```
+5. The Flatten layer converts the 3D tensor into a 1D tensor, and two dense layers reduce the vector to a number. The sigmoid convert the number to a probability score between 0 and 1.
+
+```python
+    model = Model(inputs, x, name="Transformer_Discriminator")
+```
+
+
+
+
 ## Results
 
 ### CNN results with 10 epochs
@@ -226,8 +405,9 @@ A Convolutional Neural Network (CNN) in the context of GANs is a type of neural 
 ### Transformers results with 10 epochs
 ![tranformer_10_epochs2](https://github.com/user-attachments/assets/f5432d6a-d9a3-4587-a494-40a76fd97f0d)
 
+1. we project the tensor to a 256 dimension space.
 
-## FAQs
+## Questions
 
 ### 1. What is Transpose Convolution, and why do we use it in the Generator?
 According to keras documentation, the tranpose convolution corespond to the opposite of a convolution (also called a deconvolution or upsampling), in our generator on the CNN GAN, it allow to retrieve the dimension of a 28\*28 image from our latent vector (after a prokection in a 7\*7\*256 space and a reshaping to a (7,7,128) tensor).
@@ -240,10 +420,13 @@ LeakyReLU is similar to ReLU but assigns a small slope for negative inputs inste
 
 ![image](https://github.com/user-attachments/assets/e2c454e4-f447-4557-88a0-9e30a55aebab)
 
+The Edge are well defined and correspond with the initial dataset
 
 
 - **Sigmoid**:After the convolutional layers, a sigmoid function converts the output into a probability score between 0 and 1. During the training we want that the weights lead the input to the right probabilities.
 
 ![image](https://github.com/user-attachments/assets/8381b8e3-7519-4f06-b620-a9f011972a5b)
+
+The output is less good than the CNN GAN, the edges are less defined and the image is less clear, we should maybe use more multihead attention layers or more dense layers to improve the results.
 
 ---

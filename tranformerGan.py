@@ -16,21 +16,21 @@ class transformerGan(GANInterface):
         inputs = Input(shape=(latent_dim,))
 
         # Initial dense layer to project noise into a higher-dimensional space
-        x = Dense(7 * 7 * 128, activation="relu")(inputs)
-        x = Reshape((49, 128))(x) # Reshape to (7x7 patches, 128 features)
+        x = Dense(7 * 7 * 256, activation="relu")(inputs)
+        x = Reshape((49, 256))(x) # Reshape to (7x7 patches, 128 features)
         # Positional Encoding
         position_encoding = tf.range(start=0, limit=49, delta=1)
         position_embedding = tf.keras.layers.Embedding(input_dim=49,
-        output_dim=128)(position_encoding)
+        output_dim=256)(position_encoding)
         x += position_embedding
         # Multi-Head Self-Attention
         x = MultiHeadAttention(num_heads=4, key_dim=128)(x, x)
         x = LayerNormalization()(x)
         # Feedforward network
-        x = Dense(128, activation="relu")(x)
+        x = Dense(256, activation="relu")(x)
         x = LayerNormalization()(x)
         # Reshape and upsample to image dimensions
-        x = Reshape((7, 7, 128))(x)
+        x = Reshape((7, 7, 256))(x)
         x = layers.Conv2DTranspose(64, kernel_size=4, strides=2, padding="same",
         activation="relu")(x)
         x = layers.Conv2DTranspose(1, kernel_size=4, strides=2, padding="same",
@@ -45,9 +45,9 @@ class transformerGan(GANInterface):
         # Flatten the image into a vector
         x = Flatten()(inputs)
         # Project the flattened image to a vector with 49*128 units
-        x = Dense(49 * 128, activation="relu")(x)
+        x = Dense(49 * 256, activation="relu")(x)
         # Reshape the vector into (49 patches, 128 features)
-        x = Reshape((49, 128))(x)
+        x = Reshape((49, 256))(x)
 
         # Positional Encoding
         position_encoding = tf.range(start=0, limit=49, delta=1)
@@ -60,7 +60,7 @@ class transformerGan(GANInterface):
 
         # Classification layers
         x = Flatten()(x)
-        x = Dense(128, activation="relu")(x)
+        x = Dense(256, activation="relu")(x)
         x = Dense(1, activation="sigmoid")(x)
         model = Model(inputs, x, name="Transformer_Discriminator")
         return model
