@@ -1,4 +1,4 @@
-0# GAN Training and Comparison: CNN-Based vs Transformer-Based
+# GAN Training and Comparison: CNN-Based vs Transformer-Based
 
 ## Overview
 This repository implements and compares two Generative Adversarial Network (GAN) models:
