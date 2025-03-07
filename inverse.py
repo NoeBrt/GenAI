@@ -15,7 +15,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 
 def generate_dataset(n=1000):
     np.random.seed(0)
-    X = np.random.uniform(-1, 1, n)
+    X = np.random.uniform(-5, 5, n)
     y = np.sin(X)
     return X, y
 
@@ -23,6 +23,7 @@ def build_model():
     model = Sequential([
         Input(shape=(1,)),
         Dense(3, activation="relu"),
+
         Dense(1)
     ])
     model.compile(optimizer=Adam(learning_rate=0.01), loss='mse')
