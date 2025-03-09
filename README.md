@@ -46,10 +46,10 @@ training parameter :
 ![alt text](arcsin_images/arcsin_relu1.png)
 
 2. Double ReLU
-![alt text](arcsin_relu2.png)
+![alt text](arcsin_images/arcsin_relu2.png)
 
 3. Single Linear
-![alt text](arcsin_linear.png)
+![alt text](arcsin_images/arcsin_linear.png)
 
 
 The double ReLU have the lowest MSE.
@@ -63,12 +63,12 @@ The 3 models estimate well the line between $[-0.7,0.7]$ but struggle to estimat
 
 When we predict values outside $[-1,1]$ the model stay linear.
 
-![alt text](outside_range.png)
+![alt text](arcsin_images/outside_range.png)
 
 
 When we train values outside $[-1,1]$ the model lost performance even on the linear part, $arcsin$ is on $[-1,1]$, it's mostly because the model is noisier to do the inverse.
 
-![alt text](outside_range_training.png)
+![alt text](arcsin_images/outside_range_training.png)
 
 
 ### What are the implications of approximating inverses in more complex functions ?
@@ -133,11 +133,11 @@ Sinus time embedding Model : ```0.0536```
 
 
 Minimal Model output at each timestep
-![alt text](minimal_100_128_0.0769.png)
+![alt text](diffusion_images/minimal_100_128_0.0769.png)
 
 
 Sinus time embedding Model output at each timestep
-![alt text](sinus_100_128_0.0536.png)
+![alt text](diffusion_images/sinus_100_128_0.0536.png)
 
 
 We can note that the loss is tinier on the sinus time embedding model, the edges are more defined and we lost less information.
