@@ -43,12 +43,15 @@ training parameter :
 ### Evaluation
 
 1. Single ReLU
+   
 ![alt text](arcsin_images/arcsin_relu1.png)
 
 2. Double ReLU
+   
 ![alt text](arcsin_images/arcsin_relu2.png)
 
 3. Single Linear
+   
 ![alt text](arcsin_images/arcsin_linear.png)
 
 
