@@ -146,10 +146,12 @@ We can note that the loss is tinier on the sinus time embedding model, the edges
 
 
 Minimal Model output at each timestep
+
 ![alt text](diffusion_images/infer_minimal_100.png)
 
 
 Sinus time embedding Model output at each timestep
+
 ![alt text](diffusion_images/infer_sinus_100.png)
 
 Both inference are not really well defined and random, however it seems that the minimal model have more things going on.
