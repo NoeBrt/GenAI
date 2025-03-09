@@ -1,8 +1,10 @@
+raw readme before I asked gpt to correct the spelling mistakes
+
 # Lab 4 -  Introduction to Stable Diffusion Models
 
 ## Part 1: Preliminary Activity - Neural Network for Function Inversion
 
-In this part we try to approximate the inverse of $x=\sin(y)$, so $y=arcsin(x)$  
+In this part we try to approximate the inverse of $x=\sin(y)$, so $y=arcsin(x) $  
 
 ### Dataset
 
@@ -52,9 +54,9 @@ training parameter :
 ![alt text](arcsin_linear.png)
 
 
-The double ReLU have the lowest MSE.
+The double relu have the lowest MSE.
 
-The 3 models estimate well the line between $[-0.7,0.7]$ but struggle to estimate the curve of the arcsin, it struggle to estimate the non-linear part of arcsin. It could be also linked to the distribution, maybe there is not enough data on the high curvature of sin.
+The 3 models estimate well the line between $[-0.7,0.7]$ but struggle to estimate the curve of the arcsin, it struggle to estimate the non-linear part of arcsin. It coulb be also linked to the distribution, maybe their is not enought data on the hight curvature of sin.
 
 ## Key Discussion Points:
 
@@ -81,24 +83,17 @@ On more complex function we have similar challenge :
 
 ## Part 2: Diffusion Models on Images
 
-run the code : 
-```
-python diffusion.py --epochs 100 --batch_size 64 --model minimal 
-```
-```
-python diffusion.py --epochs 100 --batch_size 64 --model sinus --time_emb_dim 256 
-```
 ## Dataset
 
-MNIST dataset for simplicity and easier benchmarking than CIFAR
+MNST dataset for simplicity and easier bencharking than cifar
 
 ### Models 
 
-Two minimal U-Net with convolution, maxpooling, upsampling and a concatenation at the output layer (see comments on code ).
+Two minmal unet with convolution, maxpooling, upsampling and a concatination at the output layer (see comments on code ).
 
-An Embeddings is used to represent the timestep to transmit the time information (so the noise level) through the model.
+A Embedings is used to represend the timestep to transmit the time information (so the noise level) throught the model.
 
-for the minimal model we use a linear time embeddings. In the Sinus Model we use a sinusoidal function to represent time, cyclic signal is also used in transformer for positional encoding. It allow model to generalize better through different timestep.
+for the minimal model we use a linear time embedings. In the Sinus Model we use a sinusoidal function to represent time, cyclic signal is also used in tranformer fro positionnal encoding. It allow model to generalize better throught different timestep.
 
 #### input
 
@@ -106,7 +101,9 @@ A timestep t & a 28 x 28 image with a level of noise corresponding to the timest
 
 #### output
 
-A noise extracted from the input image; to denoise the image we remove the model output to the noisy image
+A noise extracted from the input image
+
+to denoise the image we remove the model output to the noisy image
 
 ### training
 
@@ -124,9 +121,9 @@ We create a random noise, for a range of timestep we predict the noise we remove
 
 after 100 epochs at batch 64
 
-Minimal Model : ```0.0769```
+Minimal Model : 0.0769
 
-Sinus time embedding Model : ```0.0536```
+Sinus time embedding Model : 0.0536
 
 
 #### Denoising Results
@@ -140,7 +137,7 @@ Sinus time embedding Model output at each timestep
 ![alt text](sinus_100_128_0.0536.png)
 
 
-We can note that the loss is tinier on the sinus time embedding model, the edges are more defined and we lost less information.
+We can constat that the loss is tinyer on the sinus time embedding model, the edge are more defined and we lost less information.
 
 #### Inference Results
 
@@ -152,31 +149,24 @@ Minimal Model output at each timestep
 Sinus time embedding Model output at each timestep
 ![alt text](infer_sinus_100.png)
 
-Both inference are not really well defined and random, however it seems that the minimal model have more things going on.
+
+
+Both inference are not really well define and random, however it seems that the minmal model have more things going on.
 
 ### discussion
 
-#### What happens if we change the noise schedule ?
+## What happens if we change the noise schedule ?
 
 Changing the timestep length, the noise level, or the function used (linear vs cosine) refines the image more gradually with a longer timestep. With a timestep of 1, the process can behave like a classic GAN.
 
-### How do diffusion models compare to GANs?
+## How do diffusion models compare to GANs?
 
 Diffusion models work step by step: they slowly remove noise over several steps. GANs, on the other hand, create the image all at once without using any timesteps. Diffusion models take longer to train but are often more stable, while GANs can be faster but may have issues like mode collapse.
 
 
-## Final Reflexion
 
-### How does function inversion relate to diffusion models ?
 
-For predicting new image or denoising, instead of inversing the $sin$ function we iterativelly inverse the noise addition function.
 
-### How does iterative noise removal help generate realistic images?
 
-Removing a little bit of noise at each step enable better correction, keeping the detail and overall structure to be intact, indeed the process is more stable than generating one shot image.
 
-### Potential applications of diffusion models (e.g., text-to-image generation like Stable Diffusion).
 
-* Text-to-image generation: Just like Stable Diffusion, these models can generate detailed images from textual descriptions by concatinate label and associate them to a distribution.
-
-* Text-to-Video generation : DreamDriver use a diffusion model to generate realistic driving POV videos based on a label, lidar and 3d data.
